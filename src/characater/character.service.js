@@ -4,8 +4,8 @@ const createCharService = (name, userId, imageUrl) => {
   return Charslists.create({ user: userId, name, imageUrl });
 };
 
-const findAllCharService = () => {
-  return Charslists.find().populate("user")
+const findAllCharService = (offset=0,limit=10) => {
+  return Charslists.find().skip(offset).limit(limit).populate("user")
 };
 
 const findByIdCharService =  (idParam) => {

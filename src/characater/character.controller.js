@@ -5,7 +5,19 @@ const mongoose = require('mongoose');
 const findAllCharController = async (req, res) => {
 
   try {
-    const Chars = await CharService.findAllCharService();
+
+    let { offset, limit } = req.query
+
+    limit = Number(limit)
+    offset = Number(offset);
+
+    if (!limit) {
+      limit = 10
+    }
+    if (!offset) {
+      offset = 0
+    }
+    const Chars = await CharService.findAllCharService(offset, limit);
     return res.send({
       results: Chars.map((char) => ({
         id: char._id,
