@@ -10,12 +10,12 @@
     },
     "servers": [
         {
-            "url": "http://localhost:3001",
-            "description": "API local"
-        },
-        {
             "url": "https://api-rick-and-morty-api.herokuapp.com",
             "description": "API no Heroku"
+        },
+        {
+            "url": "http://localhost:3001",
+            "description": "API local"
         }
     ],
     "paths": {
