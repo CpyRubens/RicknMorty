@@ -1,28 +1,28 @@
 const Charslists = require('./Character');
 
-const findAllCharService = async () => {
-  const charList = await Charslists.find();
-  return charList;
+const createCharService = (name, userId, imageUrl) => {
+  return Charslists.create({ user: userId, name, imageUrl });
 };
 
-const findByIdCharService = async (idParam) => {
-  const charList = await Charslists.findById(idParam)
-  return charList;
+const findAllCharService = () => {
+  return Charslists.find().populate("user")
 };
 
-const createCharService = async (newchar) => {
-  const newChar = await Charslists.create(newchar)
-  return newChar;
+const findByIdCharService =  (idParam) => {
+  return  Charslists.findById(idParam)
 };
 
-const updateCharService = async (id, charEdit) => {
-  const charUpdated = await Charslists.findByIdAndUpdate(id, charEdit)
-  return charUpdated;
+const updateCharService = (id, charEdit) => {
+  return Charslists.findByIdAndUpdate(id, charEdit)
 };
 
-const deleteCharService = async (id) => {
-  return await Charslists.findByIdAndDelete(id);
+const deleteCharService =  (id) => {
+  return  Charslists.findByIdAndDelete(id);
 };
+
+const searchCharService = (name) => {
+  return Charslists.find({ name: { $regex: `${name || ""}`, $options: "i" } }).populate("user")
+}
 
 module.exports = {
   findAllCharService,
@@ -30,4 +30,5 @@ module.exports = {
   createCharService,
   updateCharService,
   deleteCharService,
+  searchCharService,
 };

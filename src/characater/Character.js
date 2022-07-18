@@ -1,10 +1,15 @@
-const mongooose = require('mongoose');
+const mongoose = require('mongoose');
 
-const CharSchema = new mongooose.Schema({
+const CharSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   name: { type: String, required: true },
-  image: { type: String, required: true },
+  imageUrl: { type: String, required: true },
 });
 
-const Chars = mongooose.model('Chars', CharSchema);
+const Chars = mongoose.model('Chars', CharSchema);
 
 module.exports = Chars;

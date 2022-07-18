@@ -3,8 +3,22 @@ const mongoose = require('mongoose');
 
 
 const findAllCharController = async (req, res) => {
-  const Char = await CharService.findAllCharService();
-  res.send(Char);
+
+  try {
+    const Chars = await CharService.findAllCharService();
+    return res.send({
+      results: Chars.map((char) => ({
+        id: char._id,
+        user: char.user.id,
+        name: char.name,
+        imageUrl: char.imageUrl,
+      })),
+    });
+
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+
 };
 
 const findByIdCharController = async (req, res) => {
@@ -27,17 +41,25 @@ const findByIdCharController = async (req, res) => {
 };
 
 const createCharController = async (req, res) => {
-  const Char = req.body;
-  if (
-    !Char ||
-    !Char.name ||
-    !Char.image
-  ) {
-    res.status(400).send({ mensagem: "Você não preencheu todos os dados para adicionar uma nova Char a sua lista!" });
+  try {
+    const { name } = req.body;
+    const { imageUrl } = req.body;
+
+    if (!name || !imageUrl) {
+      res.status(400).send({ message: 'Envie todos os dados necessários' });
+    }
+
+
+    const { id } = await CharService.createCharService(name, req.userId, imageUrl)
+
+    return res.send({
+      message: "Char criado com suecesso",
+      character: { id, name, imageUrl }
+    })
+  } catch (err) {
+    res.status(500).send({ message: err.message });
 
   }
-  const newChar = await CharService.createCharService(Char);
-  res.send(newChar);
 };
 
 const updateCharController = async (req, res) => {
@@ -56,7 +78,7 @@ const updateCharController = async (req, res) => {
   }
 
 
-  if (!CharEdit || !CharEdit.name || !CharEdit.image) {
+  if (!CharEdit || !CharEdit.name || !CharEdit.imageUrl) {
     return res.status(400).send({ message: "Você não preencheu todos os dados para editar a Char!" });
   }
 
@@ -78,14 +100,36 @@ const deleteCharController = async (req, res) => {
     return res.status(404).send({ message: "Char não encontrada!" })
   }
 
-
   await CharService.deleteCharService(idParam);
   res.send({ message: 'Item da lista deletado com sucesso!' })
 };
+
+const searchCharController = async (req, res) => {
+  try {
+    const { name } = req.query;
+
+    const Chars = await CharService.searchCharService(name);
+
+    return res.send({
+      characters: Chars.map((char) => ({
+        id: char._id,
+        user: char.user.id,
+        name: char.name,
+        imageUrl: char.imageUrl,
+      })),
+    });
+
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+}
+
+
 module.exports = {
   findAllCharController,
   findByIdCharController,
   createCharController,
   updateCharController,
   deleteCharController,
+  searchCharController,
 };
